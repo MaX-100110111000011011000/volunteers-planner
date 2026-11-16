@@ -19,11 +19,16 @@ async def main(page: ft.Page):
     page.update()
     await page.window.center()
 
-    # Загружаем локальные события (если файла нет — вернётся пустой список [])
     events = load_events()
 
     def persist():
         save_events(events)
+
+    def delete_event(event_data):
+        if event_data in events:
+            events.remove(event_data)
+        persist()
+        show_calendar()
 
     def show_event(event_data):
         page.controls.clear()
@@ -32,6 +37,7 @@ async def main(page: ft.Page):
                 event_data=event_data,
                 on_back=show_calendar,
                 on_change=persist,
+                on_delete_event=lambda: delete_event(event_data),
             )
         )
         page.update()

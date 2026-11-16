@@ -1,15 +1,17 @@
 import flet as ft
 from theme import AppTheme
 from views.volunteer_dialog import VolunteerDialog
+from views.event_dialog import EventDialog
 
 
 class EventView(ft.Column):
-    def __init__(self, event_data=None, on_back=None, on_change=None):
+    def __init__(self, event_data=None, on_back=None, on_change=None, on_delete_event=None):
         super().__init__(expand=True, spacing=16)
         self.event_data = event_data or {}
         self.event_data.setdefault("shifts", [])
         self.on_back = on_back
         self.on_change = on_change
+        self.on_delete_event = on_delete_event
 
         # Границы таймлайна и шаг сетки (по умолчанию 60 минут = 1 час)
         self.start_hour = self.event_data.get("start_hour", 9)
@@ -65,6 +67,26 @@ class EventView(ft.Column):
             self.on_change()
         self._rebuild()
         self.update()
+
+    def _update_event(self, updated_data):
+        self.event_data.update(updated_data)
+        self.start_hour = self.event_data.get("start_hour", 9)
+        self.end_hour = self.event_data.get("end_hour", 21)
+        if self.on_change:
+            self.on_change()
+        self._rebuild()
+        self.update()
+
+    def _open_edit_event_dialog(self, e=None):
+        dialog = EventDialog(
+            event_data=self.event_data,
+            on_save=self._update_event,
+            on_delete=self.on_delete_event,
+        )
+        if hasattr(self.page, "show_dialog"):
+            self.page.show_dialog(dialog)
+        else:
+            self.page.open(dialog)
 
     def _open_volunteer_dialog(self, e=None, shift_index=None):
         is_edit = shift_index is not None
@@ -123,15 +145,30 @@ class EventView(ft.Column):
                             ),
                         ],
                     ),
-                    ft.Container(
+                    ft.Row(
                         expand=True,
-                        alignment=ft.Alignment.CENTER,
-                        content=ft.Text(
-                            self.event_data.get("title", "Название не указано"),
-                            size=22,
-                            weight=ft.FontWeight.BOLD,
-                            color=AppTheme.TEXT_MAIN,
-                        ),
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=8,
+                        controls=[
+                            ft.Text(
+                                self.event_data.get("title", "Название не указано"),
+                                size=22,
+                                weight=ft.FontWeight.BOLD,
+                                color=AppTheme.TEXT_MAIN,
+                            ),
+                            ft.Container(
+                                bgcolor=AppTheme.BG_WINDOW,
+                                border=ft.Border.all(1, AppTheme.PRIMARY),
+                                border_radius=AppTheme.RADIUS_MEDIUM,
+                                padding=8,
+                                on_click=self._open_edit_event_dialog,
+                                content=ft.Icon(
+                                    ft.Icons.EDIT,
+                                    size=18,
+                                    color=AppTheme.TEXT_MAIN,
+                                ),
+                            ),
+                        ],
                     ),
                     ft.Container(
                         bgcolor=AppTheme.PRIMARY,
@@ -187,7 +224,7 @@ class EventView(ft.Column):
         remaining = needed - found
 
         card_bgcolor = AppTheme.EVENT_PINK if remaining > 0 else AppTheme.BG_WINDOW
-        status_text = f'Нужно найти: {remaining}' if remaining > 0 else "Все волонтёры записаны"
+        status_text = f"Нужно найти: {remaining}" if remaining > 0 else "Все волонтёры записаны"
 
         return ft.Container(
             bgcolor=card_bgcolor,
@@ -293,7 +330,11 @@ class EventView(ft.Column):
         top_offset = (start_min - day_start) * px_per_min
         card_height = duration * px_per_min
 
-        card_color = AppTheme.SECONDARY if index % 2 == 0 else AppTheme.BG_WINDOW
+        card_color = (
+            ft.Colors.with_opacity(0.5, AppTheme.SECONDARY)
+            if index % 2 == 0
+            else AppTheme.BG_WINDOW
+        )
         group = shift.get("group", "").strip()
 
         time_badge = ft.Container(

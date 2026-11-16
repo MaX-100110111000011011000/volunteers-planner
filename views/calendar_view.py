@@ -41,7 +41,6 @@ class CalendarView(ft.Column):
         self._render_days()
         self.update()
 
-
     def _open_event_dialog(self, default_date=""):
         dialog = EventDialog(
             default_date=default_date,
@@ -105,7 +104,7 @@ class CalendarView(ft.Column):
                         spacing=12,
                         controls=[
                             ft.Container(
-                                bgcolor=AppTheme.SECONDARY,
+                                bgcolor=ft.Colors.with_opacity(0.5, AppTheme.SECONDARY),
                                 border_radius=AppTheme.RADIUS_MEDIUM,
                                 padding=ft.Padding.symmetric(horizontal=16, vertical=8),
                                 content=self.month_title,
@@ -159,7 +158,7 @@ class CalendarView(ft.Column):
 
     def _build_weekdays_header(self) -> ft.Container:
         return ft.Container(
-            bgcolor=AppTheme.SECONDARY,
+            bgcolor=ft.Colors.with_opacity(0.5, AppTheme.SECONDARY),
             border_radius=AppTheme.RADIUS_MEDIUM,
             padding=ft.Padding.symmetric(vertical=10),
             content=ft.Row(

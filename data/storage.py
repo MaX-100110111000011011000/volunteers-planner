@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-DATA_FILE = Path(__file__).resolve().parent / "events.json"
+DATA_FILE = Path.home() / "VolunteersPlanner" / "events.json"
 
 
 def load_events() -> list:
