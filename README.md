@@ -12,11 +12,11 @@
 
 ## Скриншоты
 
-![](./image1.png)
+![](<img width="1190" height="770" alt="image1" src="https://github.com/user-attachments/assets/22fee07e-a7f0-46af-bc19-dadcf6e4c701" />)
 Главная страница календаря
-![Создание нового мероприятия](./image2.png)
+![Создание нового мероприятия](<img width="419" height="372" alt="image2" src="https://github.com/user-attachments/assets/7c2b84a9-7d50-45a5-94fc-367d175d6250" />)
 Создание нового мероприятия
-![Расписание смен](./image3.png)
+![Расписание смен](<img width="1181" height="768" alt="image3" src="https://github.com/user-attachments/assets/de12b421-9017-411b-9d13-6e80c0193621" />)
 Страница расписания смен
 
 ## Установка и запуск
