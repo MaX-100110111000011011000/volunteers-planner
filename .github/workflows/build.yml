@@ -1,0 +1,67 @@
+name: Release Desktop Apps
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: flet build windows --project volunteers_planner
+      - name: Build Windows Installer
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y }
+          & $iscc installer.iss
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win-installer
+          path: VolunteersPlanner-Setup.exe
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: flet build macos --project volunteers_planner
+      - name: Build macOS DMG
+        run: |
+          mkdir -p dmg_staging
+          cp -R build/macos/*.app dmg_staging/
+          ln -s /Applications dmg_staging/Applications
+          hdiutil create -volname "Volunteers Planner" -srcfolder dmg_staging -ov -format UDZO VolunteersPlanner-macOS.dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac-dmg
+          path: VolunteersPlanner-macOS.dmg
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
+          name: Планировщик волонтёров ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
+          files: |
+            VolunteersPlanner-Setup.exe
+            VolunteersPlanner-macOS.dmg
