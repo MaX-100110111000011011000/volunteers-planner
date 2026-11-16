@@ -1,6 +1,6 @@
 [Setup]
 AppName=Планировщик волонтёров
-AppVersion=1.0.0
+AppVersion=1.0.1
 DefaultDirName={autopf}\VolunteersPlanner
 DefaultGroupName=Планировщик волонтёров
 OutputDir=.
@@ -18,8 +18,8 @@ Name: "desktopicon"; Description: "Создать ярлык на рабочем
 Source: "build\windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\Планировщик волонтёров"; Filename: "{app}\volunteers_planner.exe"
-Name: "{autodesktop}\Планировщик волонтёров"; Filename: "{app}\volunteers_planner.exe"; Tasks: desktopicon
+Name: "{group}\Планировщик волонтёров"; Filename: "{app}\VolunteersPlanner.exe"
+Name: "{autodesktop}\Планировщик волонтёров"; Filename: "{app}\VolunteersPlanner.exe"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\volunteers_planner.exe"; Description: "Запустить Планировщик волонтёров"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\VolunteersPlanner.exe"; Description: "Запустить Планировщик волонтёров"; Flags: nowait postinstall skipifsilent
