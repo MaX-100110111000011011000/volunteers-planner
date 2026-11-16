@@ -1,0 +1,17 @@
+[
+  {
+    "title": "вфыафы",
+    "date": "10.11.2026",
+    "start_hour": 10,
+    "end_hour": 16,
+    "needed_count": 3,
+    "shifts": [
+      {
+        "name": "аф",
+        "group": "42Б",
+        "start": "10:00",
+        "end": "14:00"
+      }
+    ]
+  }
+]
